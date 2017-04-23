@@ -1,0 +1,73 @@
+#!/usr/bin/env python
+
+#
+# Sets up the infrastructure Terraform state storage. Creates
+# a versioned S3 bucket that will hold tfstate files.
+#
+
+import boto3
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='Sets up Terraform State storage on S3.')
+parser.add_argument(
+    '--profile', required=True,
+    help='the AWS profile with which to create the tfstate bucket')
+parser.add_argument(
+    '--tfstate-bucket', required=True,
+    help='specify the S3 bucket name in which to store tfstate')
+parser.add_argument(
+    '--tfstate-region', required=True,
+    help='specify the AWS region in which to store tfstate')
+
+
+def bucket_exists(client, name):
+    """Checks whether the bucket exists."""
+    bucket_list_response = client.list_buckets()
+    buckets = bucket_list_response['Buckets']
+    return name in set(bucket['Name'] for bucket in buckets)
+
+
+def create_bucket(client, name, region):
+    """Creates a private S3 bucket in the specified region."""
+    client.create_bucket(
+        Bucket=name,
+        ACL='private',
+        CreateBucketConfiguration={
+            'LocationConstraint': region
+        }
+    )
+
+
+def enable_bucket_versioning(client, name):
+    """Enables versioning on the S3 bucket."""
+    client.put_bucket_versioning(
+        Bucket=name,
+        VersioningConfiguration={
+            'Status': 'Enabled'
+        }
+    )
+
+
+def output_bucket_arn(name):
+    """Prints the bucket ARN to stdout."""
+    print('arn:aws:s3:::{}'.format(name))
+
+
+def bucket(session, name, region):
+    """Creates the bucket if it does not exist."""
+    client = session.client('s3')
+    if not bucket_exists(client, name):
+        create_bucket(client, name, region)
+    enable_bucket_versioning(client, name)
+    output_bucket_arn(name)
+
+
+def main():
+    args = parser.parse_args()
+    session = boto3.Session(profile_name=args.profile)
+    bucket(session, args.tfstate_bucket, args.tfstate_region)
+
+
+if __name__ == '__main__':
+    main()

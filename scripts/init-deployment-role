@@ -1,0 +1,115 @@
+#!/usr/bin/env python
+
+#
+# Sets up the AWS account trust relationships using IAM roles.
+# To do this the script creates "deployment" IAM roles within
+# in the necessary accounts that allow access to the given
+# principal which is normally the ARN of the root user for the
+# account you want to extend access to.
+# See http://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html
+# for more information.
+#
+
+import boto3
+import json
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='Sets up the AWS accounts.')
+parser.add_argument(
+    '--profile', required=True,
+    help='the AWS profile with which to create the trust relationship')
+parser.add_argument(
+    '--tfstate-bucket-arn', required=True,
+    help='specify the ARN of the S3 bucket name that holds tfstate')
+parser.add_argument(
+    '--principal-arn', required=True,
+    help='specify the principal ARN for which to enable access')
+
+ROLE_NAME='deployment'
+
+
+def deployment_role_exists(client):
+    """Checks whether the deployment IAM role already exists."""
+    try:
+        client.get_role(RoleName=ROLE_NAME)
+        return True
+    except:
+        return False
+
+def create_deployment_role(client, principal_arn):
+    """Creates the deployment IAM role."""
+    client.create_role(
+        RoleName=ROLE_NAME,
+        Path='/',
+        AssumeRolePolicyDocument=json.dumps({
+            'Version': '2012-10-17',
+            'Statement': [
+                {
+                    'Effect': 'Allow',
+                    'Principal': {
+                        'Service': 'ec2.amazonaws.com'
+                    },
+                    'Action': 'sts:AssumeRole'
+                },
+                {
+                    'Effect': 'Allow',
+                    'Principal': {
+                        'AWS': principal_arn
+                    },
+                    'Action': 'sts:AssumeRole'
+                }
+            ]
+        })
+    )
+
+
+def attach_full_ec2_access(client):
+    """Attaches a policy that enables full EC2 access."""
+    client.attach_role_policy(
+        RoleName=ROLE_NAME,
+        PolicyArn='arn:aws:iam::aws:policy/AmazonEC2FullAccess'
+    )
+
+
+def attach_tfstate_bucket_read_write_access(client, tfstate_bucket_arn):
+    """Attaches a policy that enables object read / write on the bucket."""
+    client.put_role_policy(
+        RoleName=ROLE_NAME,
+        PolicyName='ReadWriteTfState',
+        PolicyDocument=json.dumps({
+            'Version': '2012-10-17',
+            'Statement': [
+                {
+                    'Sid': 'ReadWriteTfStateBucket',
+                    'Effect': 'Allow',
+                    'Action': [
+                        's3:GetObject',
+                        's3:PutObject'
+                    ],
+                    'Resource': [
+                        '{}/*'.format(tfstate_bucket_arn)
+                    ]
+                }
+            ]
+        })
+    )
+
+
+def infrastructure_deployment_role(session, principal_arn, tfstate_bucket_arn):
+    """Creates the deployment role if it does not exist."""
+    client = session.client('iam')
+    if not deployment_role_exists(client):
+        create_deployment_role(client, principal_arn)
+    attach_full_ec2_access(client)
+    attach_tfstate_bucket_read_write_access(client, tfstate_bucket_arn)
+
+
+def main():
+    args = parser.parse_args()
+    session = boto3.Session(profile_name=args.profile)
+    infrastructure_deployment_role(session, args.principal_arn, args.tfstate_bucket_arn)
+
+
+if __name__ == '__main__':
+    main()
