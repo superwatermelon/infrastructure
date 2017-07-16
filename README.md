@@ -135,43 +135,43 @@ bucket.
 
 <table>
   <tr>
-    <th scope="row">`INTERNAL_AWS_PROFILE`</th>
+    <th scope="row"><code>INTERNAL_AWS_PROFILE</code></th>
     <td>
       The AWS profile to use when bootstrapping the **Internal** account, there
-      should be a corresponding entry in your `~/.aws/credentials` file that
-      specified the keys to use to access the account. See
+      should be a corresponding entry in your <code>~/.aws/credentials</code>
+      file that specified the keys to use to access the account. See
       [AWS Named Profiles][aws-named-profiles] for details.
     </td>
   </tr>
   <tr>
-    <th scope="row">`TEST_AWS_PROFILE`</th>
+    <th scope="row"><code>TEST_AWS_PROFILE</code></th>
     <td>
       The AWS profile to use when bootstrapping the **Test** account, there
-      should be a corresponding entry in your `~/.aws/credentials` file that
-      specified the keys to use to access the account. See
+      should be a corresponding entry in your <code>~/.aws/credentials</code>
+      file that specified the keys to use to access the account. See
       [AWS Named Profiles][aws-named-profiles] for details.
     </td>
   </tr>
   <tr>
-    <th scope="row">`STAGE_AWS_PROFILE`</th>
+    <th scope="row"><code>STAGE_AWS_PROFILE</code></th>
     <td>
       The AWS profile to use when bootstrapping the **Stage** account, there
-      should be a corresponding entry in your `~/.aws/credentials` file that
-      specified the keys to use to access the account. See
+      should be a corresponding entry in your <code>~/.aws/credentials</code>
+      file that specified the keys to use to access the account. See
       [AWS Named Profiles][aws-named-profiles] for details.
     </td>
   </tr>
   <tr>
-    <th scope="row">`LIVE_AWS_PROFILE`</th>
+    <th scope="row"><code>LIVE_AWS_PROFILE</code></th>
     <td>
       The AWS profile to use when bootstrapping the **Live** account, there
-      should be a corresponding entry in your `~/.aws/credentials` file that
-      specified the keys to use to access the account. See
+      should be a corresponding entry in your <code>~/.aws/credentials</code>
+      file that specified the keys to use to access the account. See
       [AWS Named Profiles][aws-named-profiles] for details.
     </td>
   </tr>
   <tr>
-    <th scope="row">`INTERNAL_TFSTATE_BUCKET`</th>
+    <th scope="row"><code>INTERNAL_TFSTATE_BUCKET</code></th>
     <td>
       The name to give the S3 bucket that will hold the Terraform state for
       the **Internal** infrastructure. This bucket will be created if it
@@ -179,7 +179,7 @@ bucket.
     </td>
   </tr>
   <tr>
-    <th scope="row">`TEST_TFSTATE_BUCKET`</th>
+    <th scope="row"><code>TEST_TFSTATE_BUCKET</code></th>
     <td>
       The name to give the S3 bucket that will hold the Terraform state for
       the **Test** infrastructure. This bucket will be created if it
@@ -187,7 +187,7 @@ bucket.
     </td>
   </tr>
   <tr>
-    <th scope="row">`STAGE_TFSTATE_BUCKET`</th>
+    <th scope="row"><code>STAGE_TFSTATE_BUCKET</code></th>
     <td>
       The name to give the S3 bucket that will hold the Terraform state for
       the **Stage** infrastructure. This bucket will be created if it
@@ -195,7 +195,7 @@ bucket.
     </td>
   </tr>
   <tr>
-    <th scope="row">`LIVE_TFSTATE_BUCKET`</th>
+    <th scope="row"><code>LIVE_TFSTATE_BUCKET</code></th>
     <td>
       The name to give the S3 bucket that will hold the Terraform state for
       the **Live** infrastructure. This bucket will be created if it
@@ -203,7 +203,7 @@ bucket.
     </td>
   </tr>
   <tr>
-    <th scope="row">`AWS_REGION`</th>
+    <th scope="row"><code>AWS_REGION</code></th>
     <td>
       The AWS region that will host the S3 buckets holding the Terraform state.
     </td>
