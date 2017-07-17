@@ -72,6 +72,14 @@ def attach_full_ec2_access(client):
     )
 
 
+def attach_full_r53_access(client):
+    """Attaches a policy that enables full Route 53 access."""
+    client.attach_role_policy(
+        RoleName=ROLE_NAME,
+        PolicyArn='arn:aws:iam::aws:policy/AmazonRoute53FullAccess'
+    )
+
+
 def attach_tfstate_bucket_read_write_access(client, tfstate_bucket_arn):
     """Attaches a policy that enables object read / write on the bucket."""
     client.put_role_policy(
@@ -102,6 +110,7 @@ def infrastructure_deployment_role(session, principal_arn, tfstate_bucket_arn):
     if not deployment_role_exists(client):
         create_deployment_role(client, principal_arn)
     attach_full_ec2_access(client)
+    attach_full_r53_access(client)
     attach_tfstate_bucket_read_write_access(client, tfstate_bucket_arn)
 
 
