@@ -83,6 +83,10 @@ resource "aws_iam_role_policy" "tfstate_bucket_policy" {
 EOF
 }
 
+output "role_name" {
+  value = "${aws_iam_role.role.name}"
+}
+
 output "role_arn" {
   value = "${aws_iam_role.role.arn}"
 }

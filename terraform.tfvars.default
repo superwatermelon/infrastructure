@@ -1,3 +1,5 @@
+seed_tfstate_bucket = "seed"
+
 internal_tfstate_bucket = "internal"
 
 test_tfstate_bucket = "test"

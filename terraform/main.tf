@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    key = "seed.tfstate"
+    key = "terraform.tfstate"
   }
 }
 
