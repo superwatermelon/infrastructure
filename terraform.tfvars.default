@@ -1,0 +1,15 @@
+internal_tfstate_bucket = "internal"
+
+test_tfstate_bucket = "test"
+
+stage_tfstate_bucket = "stage"
+
+live_tfstate_bucket = "live"
+
+internal_aws_profile = "internal"
+
+test_aws_profile = "test"
+
+stage_aws_profile = "stage"
+
+live_aws_profile = "live"

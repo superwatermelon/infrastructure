@@ -1,0 +1,5 @@
+install:
+  - terraform init -backend=false
+
+script:
+  - terraform validate -var-file=terraform.tfvars.default terraform

@@ -1,6 +1,5 @@
 .terraform/
-.vagrant/
-.venv/
+*.tfplan
 *.tfstate
 *.tfstate.backup
 *.tfvars
