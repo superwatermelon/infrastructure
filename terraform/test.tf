@@ -14,10 +14,15 @@ module "test" {
   tfstate_bucket       = "${var.test_tfstate_bucket}"
   principal_arn        = "arn:aws:iam::${data.aws_caller_identity.internal.account_id}:root"
   deployment_role_name = "deployment-test"
+  ecr_role_name        = "ecr-test"
 }
 
 output "test_role_arn" {
   value = "${module.test.role_arn}"
+}
+
+output "test_ecr_role_arn" {
+  value = "${module.test.ecr_role_arn}"
 }
 
 output "test_account_id" {

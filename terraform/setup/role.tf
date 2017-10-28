@@ -7,6 +7,10 @@ variable "deployment_role_name" {
   description = "The name of the deployment role"
 }
 
+variable "ecr_role_name" {
+  description = "The name of the ECR role"
+}
+
 data "aws_caller_identity" "user" {
   provider = "aws.${var.aws_profile}"
 }
@@ -83,12 +87,53 @@ resource "aws_iam_role_policy" "tfstate_bucket_policy" {
 EOF
 }
 
+resource "aws_iam_role" "ecr_role" {
+  provider = "aws.${var.aws_profile}"
+  name     = "${var.ecr_role_name}"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow"
+    },
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "AWS": "${var.principal_arn}"
+      },
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "ecr_role_access" {
+  provider   = "aws.${var.aws_profile}"
+  role       = "${aws_iam_role.ecr_role.name}"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+}
+
 output "role_name" {
   value = "${aws_iam_role.role.name}"
 }
 
 output "role_arn" {
   value = "${aws_iam_role.role.arn}"
+}
+
+output "ecr_role_name" {
+  value = "${aws_iam_role.ecr_role.name}"
+}
+
+output "ecr_role_arn" {
+  value = "${aws_iam_role.ecr_role.arn}"
 }
 
 output "account_id" {

@@ -19,6 +19,7 @@ module "internal" {
   tfstate_bucket       = "${var.internal_tfstate_bucket}"
   principal_arn        = "arn:aws:iam::${data.aws_caller_identity.internal.account_id}:root"
   deployment_role_name = "deployment-internal"
+  ecr_role_name        = "ecr-internal"
 }
 
 resource "aws_iam_role_policy" "seed_tfstate_bucket_policy" {
@@ -42,6 +43,10 @@ EOF
 
 output "internal_role_arn" {
   value = "${module.internal.role_arn}"
+}
+
+output "internal_ecr_role_arn" {
+  value = "${module.internal.ecr_role_arn}"
 }
 
 output "internal_account_id" {

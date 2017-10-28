@@ -14,10 +14,15 @@ module "stage" {
   tfstate_bucket       = "${var.stage_tfstate_bucket}"
   principal_arn        = "arn:aws:iam::${data.aws_caller_identity.internal.account_id}:root"
   deployment_role_name = "deployment-stage"
+  ecr_role_name        = "ecr-stage"
 }
 
 output "stage_role_arn" {
   value = "${module.stage.role_arn}"
+}
+
+output "stage_ecr_role_arn" {
+  value = "${module.stage.ecr_role_arn}"
 }
 
 output "stage_account_id" {
