@@ -66,6 +66,12 @@ resource "aws_iam_role_policy_attachment" "s3_access" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
+resource "aws_iam_role_policy_attachment" "rds_access" {
+  provider   = "aws.${var.aws_profile}"
+  role       = "${aws_iam_role.role.name}"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonRDSFullAccess"
+}
+
 resource "aws_iam_role_policy" "tfstate_bucket_policy" {
   provider = "aws.${var.aws_profile}"
   name     = "tfstate_bucket_policy"
