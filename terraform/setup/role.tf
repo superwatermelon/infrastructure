@@ -3,6 +3,10 @@ variable "principal_arn" {
   type        = "string"
 }
 
+variable "admin_role_name" {
+  description = "The name of the admin role"
+}
+
 variable "deployment_role_name" {
   description = "The name of the deployment role"
 }
@@ -15,7 +19,40 @@ data "aws_caller_identity" "user" {
   provider = "aws.${var.aws_profile}"
 }
 
-resource "aws_iam_role" "role" {
+resource "aws_iam_role" "admin_role" {
+  provider = "aws.${var.aws_profile}"
+  name     = "${var.admin_role_name}"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow"
+    },
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "AWS": "${var.principal_arn}"
+      },
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "admin_access" {
+  provider   = "aws.${var.aws_profile}"
+  role       = "${aws_iam_role.admin_role.name}"
+  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+}
+
+resource "aws_iam_role" "deployment_role" {
   provider = "aws.${var.aws_profile}"
   name     = "${var.deployment_role_name}"
 
@@ -44,38 +81,38 @@ EOF
 
 resource "aws_iam_role_policy_attachment" "ec2_access" {
   provider   = "aws.${var.aws_profile}"
-  role       = "${aws_iam_role.role.name}"
+  role       = "${aws_iam_role.deployment_role.name}"
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "route_53_access" {
   provider   = "aws.${var.aws_profile}"
-  role       = "${aws_iam_role.role.name}"
+  role       = "${aws_iam_role.deployment_role.name}"
   policy_arn = "arn:aws:iam::aws:policy/AmazonRoute53FullAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "ecr_access" {
   provider   = "aws.${var.aws_profile}"
-  role       = "${aws_iam_role.role.name}"
+  role       = "${aws_iam_role.deployment_role.name}"
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "s3_access" {
   provider   = "aws.${var.aws_profile}"
-  role       = "${aws_iam_role.role.name}"
+  role       = "${aws_iam_role.deployment_role.name}"
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "rds_access" {
   provider   = "aws.${var.aws_profile}"
-  role       = "${aws_iam_role.role.name}"
+  role       = "${aws_iam_role.deployment_role.name}"
   policy_arn = "arn:aws:iam::aws:policy/AmazonRDSFullAccess"
 }
 
 resource "aws_iam_role_policy" "tfstate_bucket_policy" {
   provider = "aws.${var.aws_profile}"
   name     = "tfstate_bucket_policy"
-  role     = "${aws_iam_role.role.name}"
+  role     = "${aws_iam_role.deployment_role.name}"
   policy   = <<EOF
 {
   "Version": "2012-10-17",
@@ -126,12 +163,20 @@ resource "aws_iam_role_policy_attachment" "ecr_role_access" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
 }
 
-output "role_name" {
-  value = "${aws_iam_role.role.name}"
+output "admin_role_name" {
+  value = "${aws_iam_role.admin_role.name}"
 }
 
-output "role_arn" {
-  value = "${aws_iam_role.role.arn}"
+output "admin_role_arn" {
+  value = "${aws_iam_role.admin_role.arn}"
+}
+
+output "deployment_role_name" {
+  value = "${aws_iam_role.deployment_role.name}"
+}
+
+output "deployment_role_arn" {
+  value = "${aws_iam_role.deployment_role.arn}"
 }
 
 output "ecr_role_name" {

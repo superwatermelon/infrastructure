@@ -13,12 +13,17 @@ module "test" {
   aws_profile          = "${var.test_aws_profile}"
   tfstate_bucket       = "${var.test_tfstate_bucket}"
   principal_arn        = "arn:aws:iam::${data.aws_caller_identity.internal.account_id}:root"
+  admin_role_name      = "admin-test"
   deployment_role_name = "deployment-test"
   ecr_role_name        = "ecr-test"
 }
 
-output "test_role_arn" {
-  value = "${module.test.role_arn}"
+output "test_admin_role_arn" {
+  value = "${module.test.admin_role_arn}"
+}
+
+output "test_deployment_role_arn" {
+  value = "${module.test.deployment_role_arn}"
 }
 
 output "test_ecr_role_arn" {

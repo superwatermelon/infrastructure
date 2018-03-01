@@ -13,12 +13,17 @@ module "live" {
   aws_profile          = "${var.live_aws_profile}"
   tfstate_bucket       = "${var.live_tfstate_bucket}"
   principal_arn        = "arn:aws:iam::${data.aws_caller_identity.internal.account_id}:root"
+  admin_role_name      = "admin-live"
   deployment_role_name = "deployment-live"
   ecr_role_name        = "ecr-live"
 }
 
-output "live_role_arn" {
-  value = "${module.live.role_arn}"
+output "live_admin_role_arn" {
+  value = "${module.live.admin_role_arn}"
+}
+
+output "live_deployment_role_arn" {
+  value = "${module.live.deployment_role_arn}"
 }
 
 output "live_ecr_role_arn" {

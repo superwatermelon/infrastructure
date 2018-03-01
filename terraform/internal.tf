@@ -18,13 +18,14 @@ module "internal" {
   aws_profile          = "${var.internal_aws_profile}"
   tfstate_bucket       = "${var.internal_tfstate_bucket}"
   principal_arn        = "arn:aws:iam::${data.aws_caller_identity.internal.account_id}:root"
+  admin_role_name      = "admin-internal"
   deployment_role_name = "deployment-internal"
   ecr_role_name        = "ecr-internal"
 }
 
 resource "aws_iam_role_policy" "seed_tfstate_bucket_policy" {
   name     = "seed_tfstate_bucket_policy"
-  role     = "${module.internal.role_name}"
+  role     = "${module.internal.deployment_role_name}"
   policy   = <<EOF
 {
   "Version": "2012-10-17",
@@ -41,8 +42,12 @@ resource "aws_iam_role_policy" "seed_tfstate_bucket_policy" {
 EOF
 }
 
-output "internal_role_arn" {
-  value = "${module.internal.role_arn}"
+output "internal_admin_role_arn" {
+  value = "${module.internal.admin_role_arn}"
+}
+
+output "internal_deployment_role_arn" {
+  value = "${module.internal.deployment_role_arn}"
 }
 
 output "internal_ecr_role_arn" {

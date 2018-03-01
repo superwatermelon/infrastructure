@@ -13,12 +13,17 @@ module "stage" {
   aws_profile          = "${var.stage_aws_profile}"
   tfstate_bucket       = "${var.stage_tfstate_bucket}"
   principal_arn        = "arn:aws:iam::${data.aws_caller_identity.internal.account_id}:root"
+  admin_role_name      = "admin-stage"
   deployment_role_name = "deployment-stage"
   ecr_role_name        = "ecr-stage"
 }
 
-output "stage_role_arn" {
-  value = "${module.stage.role_arn}"
+output "stage_admin_role_arn" {
+  value = "${module.stage.admin_role_arn}"
+}
+
+output "stage_deployment_role_arn" {
+  value = "${module.stage.deployment_role_arn}"
 }
 
 output "stage_ecr_role_arn" {
