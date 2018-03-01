@@ -5,6 +5,7 @@
 - [Accounts](#accounts)
 - [Prerequisite reading](#prerequisite-reading)
 - [Bootstrapping](#bootstrapping)
+- [Cross-account access](#cross-account-access)
 
 The automated configuration and deployment of the full Superwatermelon
 technical infrastructure used to manage source code and software artifacts,
@@ -234,5 +235,12 @@ This will create the required roles and S3 buckets for deployment. At which
 point you will be ready to trigger the deployment of the
 [**Internal** infrastructure][infrastructure-internal].
 
+## Cross-account access
+
+The admin roles enable [cross-account access][cross-account-access],
+users in the internal account are able to assume the admin role for other
+environments using the **Switch Role** option available in the AWS Console.
+
 [aws-named-profiles]: http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-multiple-profiles
 [infrastructure-internal]: https://github.com/superwatermelon/infrastructure-internal
+[cross-account-access]: https://aws.amazon.com/blogs/security/how-to-enable-cross-account-access-to-the-aws-management-console/
